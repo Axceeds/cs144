@@ -3,9 +3,22 @@
 #include "byte_stream.hh"
 
 #include <string>
-
+#include <set>
 class Reassembler
 {
+private:
+    struct block_node{
+        uint64_t begin = 0;
+        uint64_t length = 0;
+        std::string data = "";
+        bool operator<(const block_node t) const {return begin <t.begin; }
+    };
+    std::set<block_node> _blocks = {};
+    uint64_t _unassembled_byte = 0;
+    uint64_t _head_index = 0;
+
+    long merge_block(block_node &elm1,const block_node &elm2);
+
 public:
   /*
    * Insert a new substring to be reassembled into a ByteStream.

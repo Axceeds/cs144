@@ -12,6 +12,13 @@ class ByteStream
 {
 protected:
   uint64_t capacity_;
+  uint64_t totally_pushed_ = 0;
+  uint64_t totally_popped_ = 0;
+  uint64_t really_pushed = 0;
+  std::deque<char> buffer_ = {};
+  bool write_closed = false;
+  bool suffer_error = false;
+
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
 
 public:
@@ -22,6 +29,8 @@ public:
   const Reader& reader() const;
   Writer& writer();
   const Writer& writer() const;
+
+   uint64_t cap();
 };
 
 class Writer : public ByteStream
