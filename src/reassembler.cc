@@ -102,8 +102,10 @@ void Reassembler::insert( uint64_t first_index, string data, bool is_last_substr
         const block_node head_block = *_blocks.begin();
         // modify _head_index and _unassembled_byte according to successful write to _output
         uint64_t write_bytes = head_block.data.length();
+        uint64_t before_push = output.bytes_pushed();
         output.push(head_block.data);
-        _head_index += write_bytes;
+        uint64_t after_push = output.bytes_pushed();
+        _head_index += after_push - before_push;
         // _head_index = 18;
         // cout<<_head_index<<endl;
         _unassembled_byte -= write_bytes;
