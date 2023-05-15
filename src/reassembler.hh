@@ -16,7 +16,9 @@ private:
     std::set<block_node> _blocks = {};
     uint64_t _unassembled_byte = 0;
     uint64_t _head_index = 0;
+    bool is_EOF = false;
 
+    uint64_t sum_set();
     long merge_block(block_node &elm1,const block_node &elm2);
 
 public:

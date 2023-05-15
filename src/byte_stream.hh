@@ -30,7 +30,7 @@ public:
   Writer& writer();
   const Writer& writer() const;
 
-   uint64_t cap();
+  uint64_t cap();
 };
 
 class Writer : public ByteStream

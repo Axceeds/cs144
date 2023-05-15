@@ -50,20 +50,26 @@ void speed_test( const size_t num_chunks,   // NOLINT(bugprone-easily-swappable-
 
     while ( stream.reader().bytes_buffered() ) {
       output_data += stream.reader().peek();
+      // cout<<"output_data = "<<output_data<<endl;
       stream.reader().pop( output_data.size() - stream.reader().bytes_popped() );
     }
   }
 
   const auto stop_time = steady_clock::now();
-
+  cout<<"--------------------------------------------------------------"<<endl;
+  cout<<"data ={{{"<<data.length()<<"}}}"<<endl;
+  cout<<"--------------------------------------------------------------"<<endl;
+  cout<<"output_data ={{{"<<output_data.length()<<"}}}"<<endl;
+  cout<<"--------------------------------------------------------------"<<endl;
   if ( not stream.reader().is_finished() ) {
     throw runtime_error( "Reassembler did not close ByteStream when finished" );
   }
+  
 
   if ( data != output_data ) {
     throw runtime_error( "Mismatch between data written and read" );
   }
-
+  
   auto test_duration = duration_cast<duration<double>>( stop_time - start_time );
   auto bytes_per_second = static_cast<double>( num_chunks * capacity ) / test_duration.count();
   auto bits_per_second = 8 * bytes_per_second;

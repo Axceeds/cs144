@@ -9,6 +9,24 @@ int main()
 {
   try {
     {
+      ReassemblerTestHarness test { "mytest", 8 };
+
+      test.execute( Insert { "abc", 0 } );
+      test.execute( BytesPushed( 3 ) );
+      test.execute( IsFinished { false } );
+
+      test.execute( Insert { "ghx", 6 }.is_last() );
+      test.execute( BytesPushed( 3 ) );
+      test.execute( IsFinished { false } );
+
+      test.execute( Insert { "cdefg", 2 } );
+      test.execute( BytesPushed( 8 ) );
+      test.execute( ReadAll( "abcdefgh" ) );
+      test.execute( IsFinished { true } );
+
+    }
+
+    {
       ReassemblerTestHarness test { "all within capacity", 2 };
 
       test.execute( Insert { "ab", 0 } );

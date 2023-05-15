@@ -23,30 +23,51 @@ long Reassembler::merge_block(block_node &elm1, const block_node &elm2) {
         return x.begin + x.length - y.begin;
     }
 }
+uint64_t Reassembler::sum_set(){
+    uint64_t len = 0;
+    auto iter = _blocks.begin();
+    while(iter!=_blocks.end()){
+        iter++;
+        len += iter->length;
+    }
+    return len;
+}
 
 void Reassembler::insert( uint64_t first_index, string data, bool is_last_substring, Writer& output )
 {
-if (first_index >= _head_index + output.available_capacity()) {  // capacity over
-        return;
+    if(is_EOF ==false && is_last_substring==true){
+        is_EOF = true;
     }
+    if (first_index >= _head_index + output.available_capacity()) {  // capacity over
+            return;
+        }
     // handle extra substring prefix
     block_node elm;
     if (first_index + data.length() <= _head_index) {  // couldn't equal, because there have empty substring
         goto JUDGE_EOF;
-    } else if (first_index < _head_index) {
+    }else if (first_index < _head_index) {
         uint64_t offset = _head_index - first_index;
         elm.data.assign(data.begin() + offset, data.end());
         elm.begin = first_index + offset;
         elm.length = elm.data.length();
+        if(elm.length>output.available_capacity()){
+            // elm.data.assign(elm.data.begin(), elm.data.end()-(elm.data.length()-output.available_capacity()+sum_set()));
+            elm.data.assign(elm.data.begin(), elm.data.end()-(elm.data.length()-output.available_capacity()));
+            elm.length = elm.data.length();
+        }
     } else {
         elm.begin = first_index;
         elm.length = data.length();
         elm.data = data;
+        if(elm.length>output.available_capacity()){
+            // elm.data.assign(elm.data.begin(), elm.data.end()-(elm.data.length()-output.available_capacity()+sum_set()));
+            elm.data.assign(elm.data.begin(), elm.data.end()-(elm.data.length()-output.available_capacity()));
+            elm.length = elm.data.length();
+        }
     }
-    cout<<"yes4564"<<endl;
-    if(1){
-      return;
-    }
+    // if(1){
+    //   return;
+    // }
     _unassembled_byte += elm.length;
 
     // merge substring
@@ -84,14 +105,16 @@ if (first_index >= _head_index + output.available_capacity()) {  // capacity ove
         output.push(head_block.data);
         _head_index += write_bytes;
         // _head_index = 18;
-        cout<<_head_index<<endl;
+        // cout<<_head_index<<endl;
         _unassembled_byte -= write_bytes;
         _blocks.erase(_blocks.begin());
     }
 
+    goto JUDGE_EOF;
+
 
 JUDGE_EOF:
-    if (is_last_substring&& bytes_pending()==0) {
+    if (is_EOF&& bytes_pending()==0) {
         output.close();
     }
 }
