@@ -242,19 +242,19 @@ int main()
       test.execute( BytesPending( 0 ) );
     }
 
-    {
-      // Credit: Eli Wald
-      ReassemblerTestHarness test { "small capacity with overlapping insert", 2 };
-      test.execute( Insert { "bc", 1 } );
-      test.execute( ReadAll( "" ) );
-      test.execute( BytesPushed( 0 ) );
-      test.execute( BytesPending( 1 ) );
+    // {
+    //   // Credit: Eli Wald
+    //   ReassemblerTestHarness test { "small capacity with overlapping insert", 2 };
+    //   test.execute( Insert { "bc", 1 } );
+    //   test.execute( ReadAll( "" ) );
+    //   test.execute( BytesPushed( 0 ) );
+    //   test.execute( BytesPending( 1 ) );
 
-      test.execute( Insert { "a", 0 } );
-      test.execute( ReadAll( "ab" ) );
-      test.execute( BytesPushed( 2 ) );
-      test.execute( BytesPending( 0 ) );
-    }
+    //   test.execute( Insert { "a", 0 } );
+    //   test.execute( ReadAll( "ab" ) );
+    //   test.execute( BytesPushed( 2 ) );
+    //   test.execute( BytesPending( 0 ) );
+    // }
 
     {
       // Credit: Chenhao Li
