@@ -13,6 +13,9 @@ void TCPReceiver::receive( TCPSenderMessage message, Reassembler& reassembler, W
       _zp = message.seqno;
     }
   }
+  if ( message.FIN ) {
+    _fin_flag = true;
+  }
   // determine checkpoint
   uint64_t cp = inbound_stream.writer().bytes_pushed() + 1;
   //
@@ -28,17 +31,16 @@ TCPReceiverMessage TCPReceiver::send( const Writer& inbound_stream ) const
 {
   // Your code here.
   TCPReceiverMessage msg;
+  uint64_t cap = inbound_stream.available_capacity();
+  msg.window_size = cap > 65535 ? 65535 : cap;
   if ( !_syn_flag ) {
     msg.ackno = nullopt;
-
   } else {
     uint64_t cp = inbound_stream.writer().bytes_pushed() + 1;
-    if ( inbound_stream.writer().is_closed() ) {
+    if ( _fin_flag && inbound_stream.writer().is_closed() ) {
       ++cp;
     }
     msg.ackno = _zp + cp;
   }
-  uint64_t cap = inbound_stream.available_capacity();
-  msg.window_size = cap > 65535 ? 65535 : cap;
   return msg;
 }
